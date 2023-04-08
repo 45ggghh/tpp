@@ -1,0 +1,121 @@
+IndentWidth: 4
+Language: Cpp
+AlignAfterOpenBracket: Align
+SortIncludes: false
+ColumnLimit: 104
+PointerAlignment: Right
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+BinPackArguments: true
+BinPackParameters: true
+SpaceAfterCStyleCast: true
+BreakBeforeBraces: Attach
+BreakBeforeTernaryOperators: true
+BreakBeforeBinaryOperators: NonAssignment
+Cpp11BracedListStyle: false
+IndentCaseLabels: true
+AlignTrailingComments: true
+UseTab: Never
+---
+Checks: '-*,readability-braces-around-statements'
+WarningsAsErrors: ''
+HeaderFilterRegex: '(src|include|enhancements)\/.*\.h$'
+FormatStyle: 'file'
+CheckOptions:# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# List text files in case git doesn't characterize correctly
+*.c text
+*.h text
+*.s text
+*.in text
+*.js text
+*.md text
+*.py text
+*.sh text
+*.ld text
+*.inc text
+*.txt text
+*.json text
+*.yaml text
+
+# Same for binary
+*.bin binary
+*.m64 binary
+*.png binary
+*.aiff binary
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Retrieve required files
+      run: wget https://archive.org/download/nointro.n64/Super%20Mario%2064%20%28Japan%29.7z/Super%20Mario%2064%20%28Japan%29.z64 && mv "Super Mario 64 (Japan).z64" baserom.jp.z64
+    
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag sm64
+      
+    - name: Run the Docker image
+      run: docker run --rm --mount type=bind,source="$(pwd)",destination=/sm64 sm64 make -j# Object files
+*.o
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# datadump
+/tools/ddump/*
+
+# Text editor remnants
+*.swp
+.vscode/*
+
+# General project-specific ignores
+doxygen/doxygen/*
+build/*
+*.dump
+*.szp
+*.z64
+*.map
+.assets-local.txt
